@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cert & License Manager</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <nav>
+    <a href="/" class="brand">Cert &amp; License Manager</a>
+    <div class="nav-right">
+      {% if request.session.get('user_id') %}
+      <form method="post" action="/logout">
+        <button type="submit" class="link-btn">ログアウト</button>
+      </form>
+      {% else %}
+      <a href="/login">ログイン</a>
+      <a href="/register">新規登録</a>
+      {% endif %}
+    </div>
+  </nav>
+  <main>
+    {% block content %}{% endblock %}
+  </main>
+</body>
+</html>

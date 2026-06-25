@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>ダッシュボード</h1>
+
+<section>
+  <div class="section-header">
+    <h2>証明書</h2>
+    <a href="/certificates/new" class="btn-sm">+ 追加</a>
+  </div>
+  {% if certs %}
+  <table>
+    <thead>
+      <tr>
+        <th>ドメイン</th>
+        <th>発行者</th>
+        <th>有効期限</th>
+        <th>状態</th>
+        <th>操作</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for c in certs %}
+      <tr>
+        <td>{{ c.domain }}</td>
+        <td>{{ c.issuer }}</td>
+        <td>{{ c.expires_at }}</td>
+        <td>
+          <span class="badge {{ c.status }}">
+            {% if c.status == 'expired' %}期限切れ
+            {% elif c.status == 'warning' %}30日以内
+            {% else %}正常{% endif %}
+          </span>
+        </td>
+        <td class="actions">
+          <a href="/certificates/{{ c.id }}/edit">編集</a>
+          <form method="post" action="/certificates/{{ c.id }}/delete"
+                onsubmit="return confirm('削除しますか？')">
+            <button type="submit" class="link-btn danger">削除</button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p class="empty">証明書がありません。</p>
+  {% endif %}
+</section>
+
+<section>
+  <div class="section-header">
+    <h2>ライセンス</h2>
+    <a href="/licenses/new" class="btn-sm">+ 追加</a>
+  </div>
+  {% if licenses %}
+  <table>
+    <thead>
+      <tr>
+        <th>製品名</th>
+        <th>ライセンスキー</th>
+        <th>有効期限</th>
+        <th>状態</th>
+        <th>操作</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for l in licenses %}
+      <tr>
+        <td>{{ l.product_name }}</td>
+        <td><code>{{ l.license_key }}</code></td>
+        <td>{{ l.expires_at }}</td>
+        <td>
+          <span class="badge {{ l.status }}">
+            {% if l.status == 'expired' %}期限切れ
+            {% elif l.status == 'warning' %}30日以内
+            {% else %}正常{% endif %}
+          </span>
+        </td>
+        <td class="actions">
+          <a href="/licenses/{{ l.id }}/edit">編集</a>
+          <form method="post" action="/licenses/{{ l.id }}/delete"
+                onsubmit="return confirm('削除しますか？')">
+            <button type="submit" class="link-btn danger">削除</button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p class="empty">ライセンスがありません。</p>
+  {% endif %}
+</section>
+{% endblock %}

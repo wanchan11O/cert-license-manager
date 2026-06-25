@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="card">
+  <h1>{% if cert %}証明書を編集{% else %}証明書を追加{% endif %}</h1>
+
+  <!-- Auto-fetch -->
+  <div class="fetch-box">
+    <label>ドメインから自動取得</label>
+    <div class="fetch-row">
+      <input type="text" id="fetch-domain" placeholder="example.com" autocomplete="off">
+      <button type="button" id="fetch-btn" onclick="fetchCert()">取得</button>
+    </div>
+    <p id="fetch-msg" class="fetch-msg" style="display:none"></p>
+  </div>
+  <hr class="divider">
+
+  <!-- Manual form -->
+  <form method="post"
+        action="{% if cert %}/certificates/{{ cert.id }}/edit{% else %}/certificates{% endif %}">
+    <div class="field">
+      <label>ドメイン</label>
+      <input type="text" name="domain"
+             value="{{ cert.domain if cert else '' }}" required placeholder="example.com">
+    </div>
+    <div class="field">
+      <label>発行者</label>
+      <input type="text" name="issuer"
+             value="{{ cert.issuer if cert else '' }}" required placeholder="Let's Encrypt">
+    </div>
+    <div class="field">
+      <label>有効期限</label>
+      <input type="date" name="expires_at"
+             value="{{ cert.expires_at if cert else '' }}" required>
+    </div>
+    <div class="form-actions">
+      <button type="submit">保存</button>
+      <a href="/" class="btn-cancel">キャンセル</a>
+    </div>
+  </form>
+</div>
+
+<script>
+async function fetchCert() {
+  const input  = document.getElementById('fetch-domain');
+  const btn    = document.getElementById('fetch-btn');
+  const msg    = document.getElementById('fetch-msg');
+  const domain = input.value.trim();
+  if (!domain) return;
+
+  btn.textContent = '取得中...';
+  btn.disabled = true;
+  msg.style.display = 'none';
+
+  try {
+    const res  = await fetch('/api/cert-info?domain=' + encodeURIComponent(domain));
+    const data = await res.json();
+
+    if (data.error) {
+      msg.textContent = 'エラー: ' + data.error;
+      msg.className = 'fetch-msg error';
+      msg.style.display = '';
+    } else {
+      document.querySelector('[name=domain]').value     = data.domain;
+      document.querySelector('[name=issuer]').value     = data.issuer;
+      document.querySelector('[name=expires_at]').value = data.expires_at;
+      msg.textContent = '取得しました';
+      msg.className = 'fetch-msg ok';
+      msg.style.display = '';
+    }
+  } catch (e) {
+    msg.textContent = '通信エラー: ' + e.message;
+    msg.className = 'fetch-msg error';
+    msg.style.display = '';
+  } finally {
+    btn.textContent = '取得';
+    btn.disabled = false;
+  }
+}
+
+// Enter キーでも取得できるように
+document.getElementById('fetch-domain').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') { e.preventDefault(); fetchCert(); }
+});
+</script>
+{% endblock %}

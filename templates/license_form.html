@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="card">
+  <h1>{% if license %}ライセンスを編集{% else %}ライセンスを追加{% endif %}</h1>
+  <form method="post"
+        action="{% if license %}/licenses/{{ license.id }}/edit{% else %}/licenses{% endif %}">
+    <div class="field">
+      <label>製品名</label>
+      <input type="text" name="product_name"
+             value="{{ license.product_name if license else '' }}" required placeholder="Adobe Photoshop">
+    </div>
+    <div class="field">
+      <label>ライセンスキー</label>
+      <input type="text" name="license_key"
+             value="{{ license.license_key if license else '' }}" required placeholder="XXXX-XXXX-XXXX-XXXX">
+    </div>
+    <div class="field">
+      <label>有効期限</label>
+      <input type="date" name="expires_at"
+             value="{{ license.expires_at if license else '' }}" required>
+    </div>
+    <div class="form-actions">
+      <button type="submit">保存</button>
+      <a href="/" class="btn-cancel">キャンセル</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

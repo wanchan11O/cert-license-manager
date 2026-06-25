@@ -1,0 +1,24 @@
+# DB
+app.db
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+
+# 環境変数・シークレット
+.env
+
+# サーバーログ
+server.log
+server_out.log
+
+# SSH鍵
+*.pem
+*.key
+
+# OS
+.DS_Store
+Thumbs.db
